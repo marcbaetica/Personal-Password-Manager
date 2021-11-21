@@ -15,6 +15,12 @@ print(Encryption.load_key_from_file('private_key'))
 crypto = Encryption.encrypt(message, pub)
 decrypted = Encryption.decrypt(crypto, priv)
 
+# Breaking message (with hiding stack trace).
+print(crypto)
+crypto = crypto[:-1]
+print(crypto)
+decrypted = Encryption.decrypt(crypto, priv)
+
 print(message)
 print(crypto.hex())
 print(decrypted)

@@ -1,4 +1,5 @@
 import rsa
+from rsa.pkcs1 import DecryptionError, VerificationError
 
 
 class Encryption:
@@ -17,7 +18,11 @@ class Encryption:
 
     @staticmethod
     def decrypt(crypto, priv_key):
-        return rsa.decrypt(crypto, priv_key).decode()
+        try:
+            decrypted_message = rsa.decrypt(crypto, priv_key)
+        except DecryptionError as e:  # Hiding stack traces to prevent vulnerabilities exploitation.
+            raise SystemExit(f'Failed to decrypt message. Perhaps message contents have been tampered with? Error: {e}')
+        return decrypted_message.decode()
 
     @staticmethod
     def get_key_as_string(key):
