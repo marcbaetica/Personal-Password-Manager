@@ -1,26 +1,25 @@
-from lib.encryption import Encryption
+from pprintpp import pprint
+
+from lib.credential import Credential
+from lib.sqlite import DB
 
 
-message = 'Hello'
-pub, priv = Encryption.generate_keys()
-print(Encryption.get_key_as_string(pub))
-print(Encryption.get_key_as_string(priv))
+cred_1 = Credential('ottawa.bibliocommons.com', 'alexandria', 'red_em_all')
+cred_2 = Credential('projecteuler.net', 'smarty_pants', 'i_am_the_best')
+cred_3 = Credential('steam.com', 'gamer1', 'strong_password')
 
-Encryption.save_key_to_file(pub, 'public_key')
-print(Encryption.load_key_from_file('public_key'))
+db = DB('credentials.db')
+print(f'All tables: {db.list_all_tables()}')
 
-Encryption.save_key_to_file(priv, 'private_key')
-print(Encryption.load_key_from_file('private_key'))
+print(db.return_all_credentials())
+print(db.insert_credential_into_table(cred_1))
+print(db.insert_credential_into_table(cred_2))
+print(db.insert_credential_into_table(cred_3))
+pprint(db.return_all_credentials())
 
-crypto = Encryption.encrypt(message, pub)
-decrypted = Encryption.decrypt(crypto, priv)
+db.return_credentials_from_site('ottawa.bibliocommons.com')
+db.return_credentials_from_site('ottawa.bibliocommonZ.com')
 
-# Breaking message (with hiding stack trace).
-print(crypto)
-crypto = crypto[:-1]
-print(crypto)
-decrypted = Encryption.decrypt(crypto, priv)
+db.delete_db()
 
-print(message)
-print(crypto.hex())
-print(decrypted)
+# TODO: handle if credential query returns empty list.
