@@ -4,7 +4,7 @@ from rsa.pkcs1 import DecryptionError, VerificationError
 
 class Encryption:
     @staticmethod
-    def generate_keys(nbits=882):
+    def generate_keys(nbits=882, poolsize=1):
         # 82 bits are used as buffer by rsa
         # The remaining 800 bits (100 bytes) will allow encryption of a strings of up to 100 characters.
         # Anything under 16 bits will throw ValueError: Key too small.
@@ -40,26 +40,27 @@ class Encryption:
 
 
 # TODO: remove this or change to tests.
-message = 'Hello'
-pub, priv = Encryption.generate_keys()
-print(Encryption.get_key_as_string(pub))
-print(Encryption.get_key_as_string(priv))
+if __name__ == '__main__':
+    message = 'Hello'
+    pub, priv = Encryption.generate_keys()
+    print(Encryption.get_key_as_string(pub))
+    print(Encryption.get_key_as_string(priv))
 
-Encryption.save_key_to_file(pub, 'public_key')
-print(Encryption.load_key_from_file('public_key'))
+    Encryption.save_key_to_file(pub, 'public_key')
+    print(Encryption.load_key_from_file('public_key'))
 
-Encryption.save_key_to_file(priv, 'private_key')
-print(Encryption.load_key_from_file('private_key'))
+    Encryption.save_key_to_file(priv, 'private_key')
+    print(Encryption.load_key_from_file('private_key'))
 
-crypto = Encryption.encrypt(message, pub)
-decrypted = Encryption.decrypt(crypto, priv)
+    crypto = Encryption.encrypt(message, pub)
+    decrypted = Encryption.decrypt(crypto, priv)
 
-# Breaking message (with hiding stack trace).
-print(crypto)
-crypto = crypto[:-1]
-print(crypto)
-decrypted = Encryption.decrypt(crypto, priv)
+    # Breaking message (with hiding stack trace).
+    print(crypto)
+    crypto = crypto[:-1]
+    print(crypto)
+    decrypted = Encryption.decrypt(crypto, priv)
 
-print(message)
-print(crypto.hex())
-print(decrypted)
+    print(message)
+    print(crypto.hex())
+    print(decrypted)
