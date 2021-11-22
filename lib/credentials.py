@@ -1,4 +1,4 @@
-class Credential:
+class Credentials:
     def __init__(self, site, user, password):
         self.site = site
         self.user = user

@@ -3,7 +3,7 @@ import sqlite3
 
 
 class DB:
-    def __init__(self, db_name):
+    def __init__(self, db_name='credentials.py'):
         self._db_name = db_name
         self._connection = self._create_db(db_name)
         self._cursor = self._connection.cursor()
@@ -25,9 +25,9 @@ class DB:
         tables = self._cursor.execute('SELECT * FROM sqlite_master WHERE type="table"').fetchall()
         return [table[1] for table in tables]
 
-    def insert_credential_into_table(self, credential):
+    def insert_credentials_into_table(self, credentials):
         with self._connection as conn:
-            conn.execute(f'INSERT INTO {self._table} VALUES (?, ?, ?)', (credential.site, credential.user, credential.password))
+            conn.execute(f'INSERT INTO {self._table} VALUES (?, ?, ?)', (credentials.site, credentials.user, credentials.password))
 
     def return_all_credentials(self):
         """Retrieve all credentials from the database.
@@ -42,8 +42,8 @@ class DB:
         :param site: [String] The name of the site. Example: 'projecteuler.net'
         :return: [List] The credentials as tuples in the format (user, password).
         """
-        credentials = self._connection.execute(f'SELECT * FROM {self._table} WHERE site=?', (site,)).fetchall()
-        print([(credential[1], credential[2]) for credential in credentials])
+        all_credentials = self._connection.execute(f'SELECT * FROM {self._table} WHERE site=?', (site,)).fetchall()
+        return [(credentials[1], credentials[2]) for credentials in all_credentials]
 
     def delete_db(self):
         self._connection.close()  # Otherwise PermissionError as process still uses db file.
