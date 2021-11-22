@@ -18,7 +18,8 @@ class DB:
 
     def _create_table_if_not_exists(self, table):
         with self._connection as conn:
-            conn.execute(f'CREATE TABLE IF NOT EXISTS {table} (site TEXT, user TEXT, password TEXT)')
+            conn.execute(f'CREATE TABLE IF NOT EXISTS {table} (hash TEXT, user TEXT, password TEXT)')
+            conn.execute(f'CREATE TABLE IF NOT EXISTS sites (site TEXT)')
 
     def _list_table_columns(self):
         return self._cursor.execute('PRAGMA table_info("sqlite_master")').fetchall()
@@ -28,11 +29,17 @@ class DB:
         return [table[1] for table in tables]
 
     def insert_credentials_into_table(self, credentials, public_key):
+        hashed_site = Encryption.hash_site(credentials.site)
         cypher_site = Encryption.encrypt(credentials.site, public_key)
         cypher_user = Encryption.encrypt(credentials.user, public_key)
         cypher_password = Encryption.encrypt(credentials.password, public_key)
         with self._connection as conn:
-            conn.execute(f'INSERT INTO {self._table} VALUES (?, ?, ?)', (cypher_site, cypher_user, cypher_password))
+            conn.execute(f'INSERT INTO {self._table} VALUES (?, ?, ?)', (hashed_site, cypher_user, cypher_password))
+            conn.execute(f'INSERT INTO sites VALUES (?)', (cypher_site,))
+
+    def list_all_sites(self, private_key):
+        sites = self._connection.execute('SELECT * FROM sites').fetchall()
+        return [Encryption.decrypt(site[0], private_key) for site in sites]
 
     def return_all_credentials(self):
         """Retrieve all credentials from the database.
@@ -41,14 +48,15 @@ class DB:
         """
         return self._connection.execute(f'SELECT * FROM {self._table}').fetchall()
 
-    def return_credentials_from_site(self, site):
+    def return_credentials_for_site(self, site, private_key):
         """Retrieve all credentials associated with a site.
 
         :param site: [String] The name of the site. Example: 'projecteuler.net'
         :return: [List] The credentials as tuples in the format (user, password).
         """
-        all_credentials = self._connection.execute(f'SELECT * FROM {self._table} WHERE site=?', (site,)).fetchall()
-        return [(credentials[1], credentials[2]) for credentials in all_credentials]
+        hashed_site = Encryption.hash_site(site)
+        all_credentials = self._connection.execute(f'SELECT * FROM {self._table} WHERE hash=?', (hashed_site,)).fetchall()
+        return [(Encryption.decrypt(credentials[1], private_key), Encryption.decrypt(credentials[2], private_key)) for credentials in all_credentials]
 
     def delete_db(self):
         self._connection.close()  # Otherwise PermissionError as process still uses db file.

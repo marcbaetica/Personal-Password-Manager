@@ -17,8 +17,8 @@ print(db.insert_credentials_into_table(cred_2))
 print(db.insert_credentials_into_table(cred_3))
 pprint(db.return_all_credentials())
 
-db.return_credentials_from_site('ottawa.bibliocommons.com')
-db.return_credentials_from_site('ottawa.bibliocommonZ.com')
+db.return_credentials_for_site('ottawa.bibliocommons.com')
+db.return_credentials_for_site('ottawa.bibliocommonZ.com')
 
 db.delete_db()
 

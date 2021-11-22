@@ -1,4 +1,5 @@
 import rsa
+from hashlib import sha256
 from rsa.pkcs1 import DecryptionError, VerificationError
 
 
@@ -45,6 +46,10 @@ class Encryption:
         with open(f'{name}', 'rb') as f:
             data = f.read()
         return rsa.key.PrivateKey.load_pkcs1(data)
+
+    @staticmethod
+    def hash_site(site):
+        return sha256(site.encode()).hexdigest()
 
 
 # TODO: remove this or change to tests.

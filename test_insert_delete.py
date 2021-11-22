@@ -5,7 +5,7 @@ from lib.db import DB
 
 
 subprocess.run('python --version')
-# subprocess.run('python generate_keys.py')
+# subprocess.run('python generate_keys.py')  # Takes 1 minute to generate the 4096-bit keys.
 
 print()
 
@@ -16,8 +16,12 @@ subprocess.run('python insert_credentials.py some_site_4 some_user_4 some_passwo
 
 print()
 
-subprocess.run('python retrieve_credentials.py some_site_1')    # [('some_user_1', 'some_password_1')]
-subprocess.run('python retrieve_credentials.py lalala')         # []
+subprocess.run('python list_all_sites.py private_key')
+
+print()
+
+subprocess.run('python retrieve_credentials.py some_site_1 public_key private_key')    # [('some_user_1', 'some_password_1')]
+subprocess.run('python retrieve_credentials.py lalala public_key private_key')         # []
 
 db = DB()
 db.delete_db()
