@@ -1,6 +1,8 @@
 import os
 import sqlite3
 
+from lib.encryption import Encryption
+
 
 class DB:
     def __init__(self, db_name='credentials.db'):
@@ -25,9 +27,12 @@ class DB:
         tables = self._cursor.execute('SELECT * FROM sqlite_master WHERE type="table"').fetchall()
         return [table[1] for table in tables]
 
-    def insert_credentials_into_table(self, credentials):
+    def insert_credentials_into_table(self, credentials, public_key):
+        cypher_site = Encryption.encrypt(credentials.site, public_key)
+        cypher_user = Encryption.encrypt(credentials.user, public_key)
+        cypher_password = Encryption.encrypt(credentials.password, public_key)
         with self._connection as conn:
-            conn.execute(f'INSERT INTO {self._table} VALUES (?, ?, ?)', (credentials.site, credentials.user, credentials.password))
+            conn.execute(f'INSERT INTO {self._table} VALUES (?, ?, ?)', (cypher_site, cypher_user, cypher_password))
 
     def return_all_credentials(self):
         """Retrieve all credentials from the database.

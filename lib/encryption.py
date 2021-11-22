@@ -33,10 +33,18 @@ class Encryption:
         with open(f'{name}', 'w') as f:
             f.write(cls.get_key_as_string(key))
 
+    # TODO: following load methods merge to common codebase.
     @staticmethod
-    def load_key_from_file(name):
-        with open(f'{name}', 'r') as f:
-            return f.read()
+    def load_public_key_from_file(name):
+        with open(f'{name}', 'rb') as f:
+            data = f.read()
+        return rsa.key.PublicKey.load_pkcs1(data)
+
+    @staticmethod
+    def load_private_key_from_file(name):
+        with open(f'{name}', 'rb') as f:
+            data = f.read()
+        return rsa.key.PrivateKey.load_pkcs1(data)
 
 
 # TODO: remove this or change to tests.

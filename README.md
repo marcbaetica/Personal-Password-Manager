@@ -6,7 +6,7 @@ Anyone with the public key can insert credentials into the db, while only the tr
 from the DB through the use of the private key.
 
 #### How to use:
-First, the keys must be generated:  
+First, the keys must be generated (large keys take a minute to generate):  
 `python3 generate_keys.py`  
 NOTE: make sure to move the private keys to a different location. Whoever has this, can access your full list of credentials.
 
