@@ -3,7 +3,7 @@ import sqlite3
 
 
 class DB:
-    def __init__(self, db_name='credentials.py'):
+    def __init__(self, db_name='credentials.db'):
         self._db_name = db_name
         self._connection = self._create_db(db_name)
         self._cursor = self._connection.cursor()
