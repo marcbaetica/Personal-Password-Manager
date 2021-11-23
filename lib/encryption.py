@@ -34,18 +34,20 @@ class Encryption:
         with open(f'{name}', 'w') as f:
             f.write(cls.get_key_as_string(key))
 
-    # TODO: following load methods merge to common codebase.
-    @staticmethod
-    def load_public_key_from_file(name):
-        with open(f'{name}', 'rb') as f:
-            data = f.read()
+    @classmethod
+    def load_public_key_from_file(cls, file):
+        data = cls.read_key_file_contents(file)
         return rsa.key.PublicKey.load_pkcs1(data)
 
-    @staticmethod
-    def load_private_key_from_file(name):
-        with open(f'{name}', 'rb') as f:
-            data = f.read()
+    @classmethod
+    def load_private_key_from_file(cls, file):
+        data = cls.read_key_file_contents(file)
         return rsa.key.PrivateKey.load_pkcs1(data)
+
+    @staticmethod
+    def read_key_file_contents(file):
+        with open(file, 'rb') as f:
+            return f.read()
 
     @staticmethod
     def hash_site(site):

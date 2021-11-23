@@ -11,7 +11,6 @@ password = sys.argv[3]
 public_key = Encryption.load_public_key_from_file(sys.argv[4])  # TODO: Make read file location not file name.
 
 new_cred = Credentials(site, user, password)
-# TODO: error handling with improper input
 
 db = DB()
 db.insert_credentials_into_table(new_cred, public_key)
