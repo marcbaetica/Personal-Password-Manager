@@ -1,6 +1,6 @@
 import sys
 
-from lib.credentials import Credentials
+from lib.credentials import CypherCredentials
 from lib.db import DB
 from lib.encryption import Encryption
 
@@ -10,8 +10,8 @@ user = sys.argv[2]
 password = sys.argv[3]
 public_key = Encryption.load_public_key_from_file(sys.argv[4])  # TODO: Make read file location not file name.
 
-new_cred = Credentials(site, user, password)
+new_cypher_creds = CypherCredentials(site, user, password)
 
 db = DB()
-db.insert_credentials_into_table(new_cred, public_key)
+db.insert_credentials_into_db(new_cypher_creds)
 print(f'Inserted new credentials into db.')

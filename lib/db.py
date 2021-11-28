@@ -28,14 +28,18 @@ class DB:
         tables = self._cursor.execute('SELECT * FROM sqlite_master WHERE type="table"').fetchall()
         return [table[1] for table in tables]
 
-    def insert_credentials_into_table(self, credentials, public_key):
-        hashed_site = Encryption.hash_site(credentials.site)
-        cypher_site = Encryption.encrypt(credentials.site, public_key)
-        cypher_user = Encryption.encrypt(credentials.user, public_key)
-        cypher_password = Encryption.encrypt(credentials.password, public_key)
+    def insert_credentials_into_db(self, cypher_credentials):
         with self._connection as conn:
-            conn.execute(f'INSERT INTO {self._table} VALUES (?, ?, ?)', (hashed_site, cypher_user, cypher_password))
-            conn.execute(f'INSERT INTO sites VALUES (?)', (cypher_site,))
+            conn.execute(f'INSERT INTO {self._table} VALUES (?, ?, ?)', (cypher_credentials.hashed_site,
+                                                                         cypher_credentials.cypher_user,
+                                                                         cypher_credentials.cypher_password))
+            conn.execute(f'INSERT INTO sites VALUES (?)', (cypher_credentials.cypher_site,))
+
+    def delete_credentials_from_db(self, site, user, public_key, private_key):
+        results = self._cursor.execute(f'SELECT * FROM sites').fetchall()
+        results = [Encryption.decrypt(site, private_key) for site in results]
+        print(results)
+        print(type(results))
 
     def list_all_sites(self, private_key):
         sites = self._connection.execute('SELECT * FROM sites').fetchall()
@@ -52,6 +56,7 @@ class DB:
         """Retrieve all credentials associated with a site.
 
         :param site: [String] The name of the site. Example: 'projecteuler.net'
+        :param private_key: [PrivateKey] Private key used to decrypt the strings.
         :return: [List] The credentials as tuples in the format (user, password).
         """
         hashed_site = Encryption.hash_site(site)
@@ -66,3 +71,4 @@ class DB:
 # NOTE: context managers avoid the need for connection.commit(). Not needed in the event of select.
 # NOTE: (?), (some_var,) or (:name), ({'name': 'lala'}) is to prevent SQL injections if input comes from User.
 # TODO: Update and delete methods for credentials.
+# TODO: Insecure to do so over a channel. Simply passing the hashed/encrypted values should suffice a valid fix.

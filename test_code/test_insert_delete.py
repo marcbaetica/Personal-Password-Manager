@@ -5,7 +5,8 @@ from lib.encryption import Encryption
 from lib.db import DB
 
 
-from test_code.utils import retrieve_input_data, parse_credentials
+from test_code.utils import retrieve_input_data, parse_credentials,\
+    add_credentials_to_db, list_all_sites_and_credentials, delete_credentials_from_db
 
 
 test_data = retrieve_input_data()
@@ -23,19 +24,10 @@ items_to_modify_after_delete = [parse_credentials(item) for item in test_data['t
 subprocess.run('python --version')
 # subprocess.run('python generate_keys.py')  # Takes 1 minute to generate the 4096-bit keys.
 
-print()
 
-for credentials in items_to_add:
-    subprocess.run(f'python insert_credentials.py {credentials[0]} {credentials[1]} {credentials[2]} public_key')
-
-print()
-
-subprocess.run('python list_all_sites.py private_key')
-
-print()
-
-subprocess.run('python retrieve_credentials.py www.facebook.com public_key private_key')
-subprocess.run('python retrieve_credentials.py lalala public_key private_key')
+add_credentials_to_db(items_to_add)
+list_all_sites_and_credentials(items_to_add)
+delete_credentials_from_db(items_to_delete)
 
 db = DB()
 db.delete_db()
