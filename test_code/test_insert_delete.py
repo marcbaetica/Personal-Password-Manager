@@ -28,6 +28,7 @@ subprocess.run('python --version')
 add_credentials_to_db(items_to_add)
 list_all_sites_and_credentials(items_to_add)
 delete_credentials_from_db(items_to_delete)
+list_all_sites_and_credentials(items_to_add)
 
 db = DB()
 db.delete_db()
