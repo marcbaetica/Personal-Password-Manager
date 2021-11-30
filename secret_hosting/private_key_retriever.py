@@ -1,10 +1,20 @@
 import boto3
+import os
+import sys
 from botocore.exceptions import ClientError
-from pprint import pprint
+from dotenv import load_dotenv
 from lib.encryption import Encryption
 
 
-def get_secret(secret, region):
+load_dotenv()
+secret_name = os.getenv('secret_name')
+region_name = os.getenv('secret_region')
+if secret_name is None or region_name is None:
+    sys.exit('Could not parse variable for secret name or region. Check that .env variables are correct.'
+             f' Current values are: secret={secret_name} region={region_name}')
+
+
+def get_secret(secret=secret_name, region=region_name):
     session = boto3.session.Session()
     client = session.client(service_name='secretsmanager', region_name=region)
 
@@ -18,12 +28,3 @@ def get_secret(secret, region):
     else:
         if 'SecretString' in get_secret_value_response:
             return Encryption.load_private_key_from_text(get_secret_value_response['SecretString'])
-
-
-if __name__ == '__main__':
-    secret_name = 'PasswordManagerAppKey'
-    region_name = 'us-east-2'
-    private_key = get_secret(secret_name, region_name)
-
-    pprint(private_key)
-    print(type(private_key))
