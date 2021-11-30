@@ -9,7 +9,7 @@ user = sys.argv[2]
 password = sys.argv[3]
 if len(sys.argv) == 5:
     if sys.argv[4].lower() == 'aws_key':
-        print('using aws key')
+        print('Using private key from AWS Secret Manager.')  # TODO: Remove after testing.
         private_key = load_private_key_from_aws_secret()
     else:
         sys.exit(f'{sys.argv[4]} is not an acceptable value. Please use "aws_key" to pull keys from AWS Secrets Manager'
