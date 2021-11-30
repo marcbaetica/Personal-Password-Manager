@@ -44,6 +44,10 @@ class Encryption:
         data = cls.read_key_file_contents(file)
         return rsa.key.PrivateKey.load_pkcs1(data)
 
+    @classmethod
+    def load_private_key_from_text(cls, text):
+        return rsa.key.PrivateKey.load_pkcs1(text.encode())
+
     @staticmethod
     def read_key_file_contents(file):
         with open(file, 'rb') as f:

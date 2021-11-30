@@ -37,7 +37,7 @@ class DB:
                                                                                cypher_credentials.cypher_password))
             conn.execute(f'INSERT INTO sites VALUES (?)', (cypher_credentials.cypher_site,))
 
-    def delete_credentials_from_db(self, site, user, public_key, private_key):
+    def delete_credentials_from_db(self, site, user, private_key):
         cypher_sites = self._cursor.execute(f'SELECT * FROM sites').fetchall()
         sites = [Encryption.decrypt(site[0], private_key) for site in cypher_sites]
         if site not in sites:
@@ -53,6 +53,7 @@ class DB:
         with self._connection as conn:
             conn.execute(f'DELETE FROM {self._creds_table} WHERE hash=? AND user=?', (Encryption.hash_site(site), cypher_users[users.index(user)][0]))
             conn.execute(f'DELETE FROM {self._sites_table} WHERE site=?', (cypher_sites[sites.index(site)][0],))
+            print('Deleted credentials!')
 
 
     def list_all_sites(self, private_key):
