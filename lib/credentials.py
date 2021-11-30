@@ -1,8 +1,8 @@
 from lib.encryption import Encryption
-from lib.load_public_key import load_public_key
+from lib.load_keys import load_public_key_from_file
 
 
-public_key = load_public_key()
+public_key = load_public_key_from_file()
 
 
 class CypherCredentials:

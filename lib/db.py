@@ -72,7 +72,6 @@ class DB:
 
     def do_credentials_already_exist(self, site, user, private_key):
         sites = self.list_all_sites(private_key)
-        # TODO: make users retreival method for increased cohesion.
         users = self._list_all_users_for_site(site, private_key)
         if site in sites and user in users:
             return True

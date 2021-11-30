@@ -29,10 +29,11 @@ def list_all_sites_and_credentials(credentials_list):
     subprocess.run('python retrieve_credentials.py lalala private_key')
 
 
-def add_credentials_to_db(credentials_to_add):
+def add_credentials_to_db(credentials_to_add, is_aws_key=False):
     print('\nAdding credentials to db:')
     for credentials in credentials_to_add:
-        subprocess.run(f'python insert_credentials.py {credentials[0]} {credentials[1]} {credentials[2]} public_key')
+        subprocess.run(f'python insert_credentials.py {credentials[0]} {credentials[1]} {credentials[2]}'
+                       f' {"aws_key" if is_aws_key else ""}')
 
 
 def delete_credentials_from_db(credentials_to_delete):

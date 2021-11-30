@@ -1,15 +1,21 @@
 import sys
 from lib.credentials import CypherCredentials
 from lib.db import DB
-from lib.encryption import Encryption
-from secret_hosting.private_key_retriever import get_secret
+from lib.load_keys import load_private_key_from_aws_secret, load_private_key_from_file
 
 
 site = sys.argv[1]
 user = sys.argv[2]
 password = sys.argv[3]
-# private_key = Encryption.load_private_key_from_file(sys.argv[4])
-private_key = get_secret()  # TODO: toggle between AWS secrets and file on FS.
+if len(sys.argv) == 5:
+    if sys.argv[4].lower() == 'aws_key':
+        print('using aws key')
+        private_key = load_private_key_from_aws_secret()
+    else:
+        sys.exit(f'{sys.argv[4]} is not an acceptable value. Please use "aws_key" to pull keys from AWS Secrets Manager'
+                 f' or nothing to use a local file defined in your .env.')
+else:
+    private_key = load_private_key_from_file()
 
 
 db = DB()

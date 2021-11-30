@@ -1,7 +1,5 @@
-import json
 import subprocess
 from pprintpp import pprint
-from lib.encryption import Encryption
 from lib.db import DB
 
 
@@ -25,7 +23,7 @@ subprocess.run('python --version')
 # subprocess.run('python generate_keys.py')  # Takes 1 minute to generate the 4096-bit keys.
 
 
-add_credentials_to_db(items_to_add)
+add_credentials_to_db(items_to_add, True)
 list_all_sites_and_credentials(items_to_add)
 delete_credentials_from_db(items_to_delete)
 add_credentials_to_db(items_to_add)
