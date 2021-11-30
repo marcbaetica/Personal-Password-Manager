@@ -55,7 +55,6 @@ class DB:
             conn.execute(f'DELETE FROM {self._sites_table} WHERE site=?', (cypher_sites[sites.index(site)][0],))
             print('Deleted credentials!')
 
-
     def list_all_sites(self, private_key):
         sites = self._connection.execute('SELECT * FROM sites').fetchall()
         return [Encryption.decrypt(site[0], private_key) for site in sites]
@@ -66,6 +65,18 @@ class DB:
         :return: [List] The site and credentials as tuples in the format (site, user, password).
         """
         return self._connection.execute(f'SELECT * FROM {self._creds_table}').fetchall()
+
+    def _list_all_users_for_site(self, site, private_key):
+        encrypted_users = self._connection.execute(f'SELECT user FROM credentials WHERE hash=?', (Encryption.hash_site(site),)).fetchall()
+        return [Encryption.decrypt(user[0], private_key) for user in encrypted_users]
+
+    def do_credentials_already_exist(self, site, user, private_key):
+        sites = self.list_all_sites(private_key)
+        # TODO: make users retreival method for increased cohesion.
+        users = self._list_all_users_for_site(site, private_key)
+        if site in sites and user in users:
+            return True
+        return False
 
     def return_credentials_for_site(self, site, private_key):
         """Retrieve all credentials associated with a site.

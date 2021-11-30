@@ -17,7 +17,7 @@ items_to_modify_after_delete = [parse_credentials(item) for item in test_data['t
 
 # pprint(items_to_add)
 # pprint(items_to_modify_before_delete)
-# pprint(items_to_modify_before_delete)
+# pprint(items_to_delete)
 # pprint(items_to_modify_after_delete)
 
 
@@ -28,6 +28,7 @@ subprocess.run('python --version')
 add_credentials_to_db(items_to_add)
 list_all_sites_and_credentials(items_to_add)
 delete_credentials_from_db(items_to_delete)
+add_credentials_to_db(items_to_add)
 list_all_sites_and_credentials(items_to_add)
 
 db = DB()
